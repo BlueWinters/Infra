@@ -31,25 +31,31 @@ def process_rotate(image, angle):
     return encode_image(rotated)
 
 
-def process_grayscale(img):
-    """处理 grayscale 操作"""
-    return ImageOps.grayscale(img), None
+def process_grayscale(image):
+    if isinstance(image, str):
+        image = decode_image(image)
+    assert isinstance(image, PIL.Image.Image)
+    return ImageOps.grayscale(image)
 
 
-def process_blur(img, params):
-    """处理 blur 操作"""
-    radius = params.get("radius", 3)
-    if not isinstance(radius, (int, float)) or radius <= 0:
-        return None, "Invalid blur radius"
-    return img.filter(ImageFilter.GaussianBlur(radius)), None
+def process_blur(image, radius):
+    if isinstance(image, str):
+        image = decode_image(image)
+    assert isinstance(image, PIL.Image.Image)
+    assert isinstance(radius, int) and radius > 0
+    return image.filter(ImageFilter.GaussianBlur(radius))
 
 
-def process_flip(img):
-    """处理 flip 操作"""
-    return ImageOps.flip(img), None
+def process_flip(image):
+    if isinstance(image, str):
+        image = decode_image(image)
+    assert isinstance(image, PIL.Image.Image)
+    return ImageOps.flip(image)
 
 
-def process_mirror(img):
-    """处理 mirror 操作"""
-    return ImageOps.mirror(img), None
+def process_mirror(image):
+    if isinstance(image, str):
+        image = decode_image(image)
+    assert isinstance(image, PIL.Image.Image)
+    return ImageOps.mirror(image)
 
