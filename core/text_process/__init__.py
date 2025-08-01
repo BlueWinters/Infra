@@ -1,4 +1,4 @@
 
 
-def pipe_text_process(parameters):
+def pipe_text_process(method, *args, **kwargs):
     ...

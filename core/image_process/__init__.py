@@ -23,6 +23,7 @@ def pipe_image_process(method, *args, **kwargs):
         start_time = time.perf_counter()
 
         # 应用图像处理
+        assert method in Processors, 'pipe_image_process with invalid method'
         processor = Processors[method]
         result = processor(*args, **kwargs)
 

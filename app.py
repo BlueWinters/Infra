@@ -2,8 +2,8 @@
 import logging
 import os
 from flask import Flask, request, jsonify, render_template
-from core import pipe_image_process, pipe_text_process, pipe_video_process
-from parser import parse_parameters
+from core import do_process
+from params import parse_parameters
 
 # application
 app = Flask(__name__, static_folder='static', template_folder='templates')
@@ -14,12 +14,6 @@ logger = logging.getLogger(__name__)
 os.makedirs('static', exist_ok=True)
 os.makedirs('templates', exist_ok=True)
 
-
-ProcessMapping = {
-    "image_process": pipe_image_process,
-    "text_process": pipe_text_process,
-    "video_process": pipe_video_process,
-}
 
 StatusMapping = {
     "success": {
@@ -48,15 +42,6 @@ StatusMapping = {
         "message": "Unknown Error"
     }
 }
-
-
-def do_process(parameters):
-    process_type = parameters.get("process_type")
-    process_params = parameters.get('process_params')
-    return ProcessMapping[process_type](
-        process_params['method'],
-        *process_params['args'],
-        **process_params['kwargs'])
 
 
 @app.route('/')
