@@ -1,6 +1,7 @@
 # app.py
 import logging
 import os
+import copy
 from flask import Flask, request, jsonify, render_template
 from core import do_process
 from params import parse_parameters
@@ -36,10 +37,11 @@ StatusMapping = {
         "status_code": 4003,
         "message": "Missing Parameter"
     },
-    #
-    "unknown_error": {
+    # error template
+    "error_template": {
         "status_code": 5000,
-        "message": "Unknown Error"
+        "error_type": "Exception",
+        "message": "Error Message"
     }
 }
 
@@ -72,14 +74,15 @@ def process():
         return jsonify(process_result), 200
     except Exception as e:
         logger.error("request failed: {}".format(str(e)))
-        info = StatusMapping['unknown_error']
+        info = copy.deepcopy(StatusMapping['error_template'])
+        info["error_type"] = repr(e)
         info["message"] = str(e)
         return jsonify(info), 500
 
 
 @app.route('/health', methods=['GET'])
 def health_check():
-    return jsonify(StatusMapping['success'])
+    return jsonify(StatusMapping['success']), 200
 
 
 if __name__ == '__main__':

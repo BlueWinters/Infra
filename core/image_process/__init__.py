@@ -26,6 +26,7 @@ def pipe_image_process(method, *args, **kwargs):
         assert method in Processors, 'pipe_image_process with invalid method'
         processor = Processors[method]
         result = processor(*args, **kwargs)
+        encoded_image = encode_image(result)
 
         # 记录结束时间
         end_time = time.perf_counter()
@@ -33,7 +34,7 @@ def pipe_image_process(method, *args, **kwargs):
 
         # 返回成功响应
         return {
-            "result": result,
+            "result": encoded_image,
             "elapsed": round(elapsed_time, 4),
         }
     except AssertionError as e:

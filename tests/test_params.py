@@ -342,4 +342,19 @@ def test_decode_data_item_functionality():
 
 if __name__ == "__main__":
     # 运行测试并生成报告
-    pytest.main([__file__, "-v", "--tb=short"])
+    import sys
+
+    # 检查是否需要生成覆盖率报告
+    if "--cov" in sys.argv:
+        # 运行带覆盖率的测试
+        pytest.main([
+            __file__,
+            "-v",
+            "--tb=short",
+            "--cov=params",
+            "--cov-report=term-missing",
+            "--cov-report=html:cache/tests/test_params/coverage_report"
+        ])
+    else:
+        # 运行普通测试
+        pytest.main([__file__, "-v", "--tb=short"])

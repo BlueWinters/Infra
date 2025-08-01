@@ -19,7 +19,7 @@ def process_resize(image, height, width):
     assert isinstance(height, int) and height > 0, 'process_resize with invalid resize height'
     assert isinstance(width, int) and width > 0, 'process_resize with invalid resize width'
     resized = image.resize((width, height), Image.Resampling.BILINEAR)
-    return encode_image(resized)
+    return resized
 
 
 def process_rotate(image, angle):
@@ -28,7 +28,7 @@ def process_rotate(image, angle):
     assert isinstance(image, PIL.Image.Image), 'process_rotate with invalid input image'
     assert isinstance(angle, (float, int)), 'process_rotate with invalid rotation angle'
     rotated = image.rotate(angle, expand=True)
-    return encode_image(rotated)
+    return rotated
 
 
 def process_grayscale(image):

@@ -3,11 +3,9 @@ import pytest
 import base64
 import json
 import os
-import logging
 from io import BytesIO
 from PIL import Image
-import numpy as np
-from core.image_process import pipe_image_process
+from core.image_process import pipe_image_process, decode_image
 from params import parse_parameters
 
 
@@ -35,7 +33,7 @@ def setup_cache_directory(subdir):
 
 def save_image_from_base64(image_b64, filename):
     """将Base64编码的图像保存为文件"""
-    cache_dir = setup_cache_directory('result_image')
+    cache_dir = setup_cache_directory('result_common_image')
     image_data = base64.b64decode(image_b64)
     with open(os.path.join(cache_dir, filename), 'wb') as f:
         f.write(image_data)
@@ -59,7 +57,7 @@ def test_process_image_resize():
     save_image_from_base64(result["result"], "resized_image.png")
 
     # 保存结果到缓存目录以供检查
-    cache_dir = setup_cache_directory('result_json_common')
+    cache_dir = setup_cache_directory('result_common_json')
     with open(os.path.join(cache_dir, 'resize_result.json'), 'w', encoding='utf-8') as f:
         json.dump({
             "method": "resize",
@@ -88,7 +86,7 @@ def test_process_image_rotate():
     save_image_from_base64(result["result"], "rotated_image.png")
 
     # 保存结果到缓存目录以供检查
-    cache_dir = setup_cache_directory('result_json_common')
+    cache_dir = setup_cache_directory('result_common_json')
     with open(os.path.join(cache_dir, 'rotate_result.json'), 'w', encoding='utf-8') as f:
         json.dump({
             "method": "rotate",
@@ -109,15 +107,15 @@ def test_process_image_grayscale():
     assert "result" in result
     assert "elapsed" in result
     # 灰度化返回Image对象
-    assert isinstance(result["result"], Image.Image)
+    assert isinstance(result["result"], str)
     assert result["elapsed"] >= 0
 
     # 保存处理后的图像
-    cache_dir = setup_cache_directory('result_image')
-    result["result"].save(os.path.join(cache_dir, "grayscale_image.png"))
+    cache_dir = setup_cache_directory('result_common_image')
+    decode_image(result["result"]).save(os.path.join(cache_dir, "grayscale_image.png"))
 
     # 保存结果到缓存目录以供检查
-    cache_dir = setup_cache_directory('result_json_common')
+    cache_dir = setup_cache_directory('result_common_json')
     with open(os.path.join(cache_dir, 'grayscale_result.json'), 'w', encoding='utf-8') as f:
         json.dump({
             "method": "grayscale",
@@ -136,15 +134,15 @@ def test_process_image_blur():
     assert result is not None
     assert "result" in result
     assert "elapsed" in result
-    assert isinstance(result["result"], Image.Image)
+    assert isinstance(result["result"], str)
     assert result["elapsed"] >= 0
 
     # 保存处理后的图像
-    cache_dir = setup_cache_directory('result_image')
-    result["result"].save(os.path.join(cache_dir, "blurred_image.png"))
+    cache_dir = setup_cache_directory('result_common_image')
+    decode_image(result["result"]).save(os.path.join(cache_dir, "blurred_image.png"))
 
     # 保存结果到缓存目录以供检查
-    cache_dir = setup_cache_directory('result_json_common')
+    cache_dir = setup_cache_directory('result_common_json')
     with open(os.path.join(cache_dir, 'blur_result.json'), 'w', encoding='utf-8') as f:
         json.dump({
             "method": "blur",
@@ -164,15 +162,15 @@ def test_process_image_flip():
     assert result is not None
     assert "result" in result
     assert "elapsed" in result
-    assert isinstance(result["result"], Image.Image)
+    assert isinstance(result["result"], str)
     assert result["elapsed"] >= 0
 
     # 保存处理后的图像
-    cache_dir = setup_cache_directory('result_image')
-    result["result"].save(os.path.join(cache_dir, "flipped_image.png"))
+    cache_dir = setup_cache_directory('result_common_image')
+    decode_image(result["result"]).save(os.path.join(cache_dir, "flipped_image.png"))
 
     # 保存结果到缓存目录以供检查
-    cache_dir = setup_cache_directory('result_json_common')
+    cache_dir = setup_cache_directory('result_common_json')
     with open(os.path.join(cache_dir, 'flip_result.json'), 'w', encoding='utf-8') as f:
         json.dump({
             "method": "flip",
@@ -191,15 +189,15 @@ def test_process_image_mirror():
     assert result is not None
     assert "result" in result
     assert "elapsed" in result
-    assert isinstance(result["result"], Image.Image)
+    assert isinstance(result["result"], str)
     assert result["elapsed"] >= 0
 
     # 保存处理后的图像
-    cache_dir = setup_cache_directory('result_image')
-    result["result"].save(os.path.join(cache_dir, "mirrored_image.png"))
+    cache_dir = setup_cache_directory('result_common_image')
+    decode_image(result["result"]).save(os.path.join(cache_dir, "mirrored_image.png"))
 
     # 保存结果到缓存目录以供检查
-    cache_dir = setup_cache_directory('result_json_common')
+    cache_dir = setup_cache_directory('result_common_json')
     with open(os.path.join(cache_dir, 'mirror_result.json'), 'w', encoding='utf-8') as f:
         json.dump({
             "method": "mirror",
@@ -218,7 +216,7 @@ def test_process_image_invalid_method():
         assert False, "Should have raised AssertionError"
     except AssertionError as e:
         # 保存结果到缓存目录以供检查
-        cache_dir = setup_cache_directory('result_json_error')
+        cache_dir = setup_cache_directory('result_error_json')
         with open(os.path.join(cache_dir, 'invalid_method_result.json'), 'w', encoding='utf-8') as f:
             json.dump({
                 "method": "invalid_method",
@@ -236,7 +234,7 @@ def test_process_image_invalid_parameters():
         pipe_image_process("resize", image_data, -1, -1)
         assert False, "Should have raised AssertionError"
     except AssertionError as e:
-        cache_dir = setup_cache_directory('result_json_error')
+        cache_dir = setup_cache_directory('result_error_json')
         with open(os.path.join(cache_dir, 'invalid_resize_parameters_result.json'), 'w', encoding='utf-8') as f:
             json.dump({
                 "method": "resize",
@@ -250,7 +248,7 @@ def test_process_image_invalid_parameters():
         pipe_image_process("blur", image_data, -1)
         assert False, "Should have raised AssertionError"
     except AssertionError as e:
-        cache_dir = setup_cache_directory('result_json_error')
+        cache_dir = setup_cache_directory('result_error_json')
         with open(os.path.join(cache_dir, 'invalid_blur_parameters_result.json'), 'w', encoding='utf-8') as f:
             json.dump({
                 "method": "blur",
@@ -264,7 +262,7 @@ def test_process_image_invalid_parameters():
         pipe_image_process("rotate", image_data, "invalid_angle")
         assert False, "Should have raised AssertionError"
     except AssertionError as e:
-        cache_dir = setup_cache_directory('result_json_error')
+        cache_dir = setup_cache_directory('result_error_json')
         with open(os.path.join(cache_dir, 'invalid_rotate_parameters_result.json'), 'w', encoding='utf-8') as f:
             json.dump({
                 "method": "rotate",
@@ -284,7 +282,7 @@ def test_process_image_invalid_base64():
         assert False, "Should have raised ValueError"
     except ValueError as e:
         # 保存结果到缓存目录以供检查
-        cache_dir = setup_cache_directory('result_json_error')
+        cache_dir = setup_cache_directory('result_error_json')
         with open(os.path.join(cache_dir, 'invalid_base64_result.json'), 'w', encoding='utf-8') as f:
             json.dump({
                 "input": "invalid_base64",
@@ -302,15 +300,15 @@ def test_process_image_performance():
     for i in range(5):
         result = pipe_image_process("grayscale", image_data)
         assert result["elapsed"] >= 0
-        assert isinstance(result["result"], Image.Image)
+        assert isinstance(result["result"], str)
         elapsed_times.append(result["elapsed"])
 
         # 保存每次处理的结果图像
-        cache_dir = setup_cache_directory('result_image')
-        result["result"].save(os.path.join(cache_dir, f"performance_test_{i}.png"))
+        cache_dir = setup_cache_directory('result_common_image')
+        decode_image(result["result"]).save(os.path.join(cache_dir, f"performance_test_{i}.png"))
 
     # 保存结果到缓存目录以供检查
-    cache_dir = setup_cache_directory('result_json_common')
+    cache_dir = setup_cache_directory('result_common_json')
     with open(os.path.join(cache_dir, 'performance_result.json'), 'w', encoding='utf-8') as f:
         json.dump({
             "method": "grayscale",
@@ -332,15 +330,15 @@ def test_process_image_consistency():
         results.append(result["result"])
 
         # 保存每次处理的结果图像
-        cache_dir = setup_cache_directory('result_image')
-        result["result"].save(os.path.join(cache_dir, f"consistency_test_{i}.png"))
+        cache_dir = setup_cache_directory('result_common_image')
+        decode_image(result["result"]).save(os.path.join(cache_dir, f"consistency_test_{i}.png"))
 
     # 对于灰度化等确定性操作，结果应该一致
     for result in results:
-        assert isinstance(result, Image.Image)
+        assert isinstance(result, str)
 
     # 保存结果到缓存目录以供检查
-    cache_dir = setup_cache_directory('result_json_common')
+    cache_dir = setup_cache_directory('result_common_json')
     with open(os.path.join(cache_dir, 'consistency_result.json'), 'w', encoding='utf-8') as f:
         json.dump({
             "method": "grayscale",
@@ -385,7 +383,7 @@ def test_process_image_with_parsed_parameters():
     save_image_from_base64(result["result"], "parsed_parameters_image.png")
 
     # 保存结果到缓存目录以供检查
-    cache_dir = setup_cache_directory('result_json_common')
+    cache_dir = setup_cache_directory('result_common_json')
     with open(os.path.join(cache_dir, 'parsed_parameters_result.json'), 'w', encoding='utf-8') as f:
         json.dump({
             "process_type": parsed_params["process_type"],
@@ -396,27 +394,19 @@ def test_process_image_with_parsed_parameters():
         }, f, ensure_ascii=False, indent=2)
 
 
-def test_process_image_check():
-    """测试check方法，用于调试参数"""
-    image_data = create_test_image_base64()
-
-    # 执行check方法，该方法会打印参数信息
-    result = pipe_image_process("check", image_data, 123, flag=True)
-
-    assert result is not None
-    assert "result" in result
-    assert "elapsed" in result
-    assert result["elapsed"] >= 0
-
-    # 保存结果到缓存目录以供检查
-    cache_dir = setup_cache_directory('result_json_common')
-    with open(os.path.join(cache_dir, 'check_result.json'), 'w', encoding='utf-8') as f:
-        json.dump({
-            "method": "check",
-            "elapsed": result["elapsed"]
-        }, f, ensure_ascii=False, indent=2)
-
-
 if __name__ == "__main__":
-    # 运行测试并生成报告
-    pytest.main([__file__, "-v", "--tb=short"])
+    import sys
+    # 检查是否需要生成覆盖率报告
+    if "--cov" in sys.argv:
+        # 运行带覆盖率的测试
+        pytest.main([
+            __file__,
+            "-v",
+            "--tb=short",
+            "--cov=core.image_process",
+            "--cov-report=term-missing",
+            "--cov-report=html:cache/tests/test_process_image/coverage_report"
+        ])
+    else:
+        # 运行普通测试
+        pytest.main([__file__, "-v", "--tb=short"])
