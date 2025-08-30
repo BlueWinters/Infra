@@ -2,12 +2,12 @@
 
 
 ## TODO
-- [x] ¼òµ¥ÓÃÓÚÍ¼Ïñ´¦ÀíµÄAPI¼Ü¹¹
-- [ ] Benchmark²âÊÔ½Å±¾
-  - [x] »ùÓÚpytestµÄµ¥Ôª²âÊÔ
-  - [x] flask¼¯³É²âÊÔ
-  - [ ] dockerÔËĞĞÊ±²âÊÔ
-- [ ] SessionÓë·ÇSession»úÖÆ
-- [ ] ÓÃ»§Êı¾İ±£´æ
-- [ ] FlaskÓëGradio-WebUI¼¯³É
-- [ ] CI/CD²¿Êğ
+- [x] ç®€å•ç”¨äºå›¾åƒå¤„ç†çš„APIæ¶æ„
+- [ ] Benchmarkæµ‹è¯•è„šæœ¬
+  - [x] åŸºäºpytestçš„å•å…ƒæµ‹è¯•
+  - [x] flaské›†æˆæµ‹è¯•
+  - [ ] dockerè¿è¡Œæ—¶æµ‹è¯•
+- [ ] Sessionä¸éSessionæœºåˆ¶
+- [ ] ç”¨æˆ·æ•°æ®ä¿å­˜
+- [ ] Flaskä¸Gradio-WebUIé›†æˆ
+- [ ] CI/CDéƒ¨ç½²
