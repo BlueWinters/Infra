@@ -1,12 +1,9 @@
 import logging
-import time
-from .pil_io import *
 from .pil_function import *
 
 
 # 支持的操作映射
 Processors = {
-    "check": process_check,
     "resize": process_resize,
     "rotate": process_rotate,
     "grayscale": process_grayscale,
@@ -19,24 +16,10 @@ Processors = {
 def pipe_image_process(method, *args, **kwargs):
     """图像处理主流程"""
     try:
-        # 记录开始时间
-        start_time = time.perf_counter()
-
-        # 应用图像处理
         assert method in Processors, 'pipe_image_process with invalid method'
         processor = Processors[method]
         result = processor(*args, **kwargs)
-        encoded_image = encode_image(result)
-
-        # 记录结束时间
-        end_time = time.perf_counter()
-        elapsed_time = end_time - start_time
-
-        # 返回成功响应
-        return {
-            "result": encoded_image,
-            "elapsed": round(elapsed_time, 4),
-        }
+        return result
     except AssertionError as e:
         logging.error('process assert error: '.format(str(e)))
         raise e

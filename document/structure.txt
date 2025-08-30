@@ -1,0 +1,5 @@
+application/
+├── app.py                # 主程序
+├── requirements.txt      # 依赖文件
+└── static/               # 存放临时文件或静态资源
+    └── uploads/          # 上传图片存储目录
